@@ -1,0 +1,22 @@
+{
+  "name": "purescript-matryoshka",
+  "homepage": "https://github.com/slamdata/purescript-matryoshka",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/slamdata/purescript-matryoshka.git"
+  },
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "output",
+    "bower.json",
+    "package.json"
+  ],
+  "dependencies": {
+    "purescript-fixed-points": "^2.0.0",
+    "purescript-free": "^3.0.1",
+    "purescript-transformers": "^2.0.2"
+  }
+}
