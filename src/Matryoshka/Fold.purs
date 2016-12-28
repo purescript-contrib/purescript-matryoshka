@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -}
 
-module Matryoshka.Recursive where
+module Matryoshka.Fold where
 
 import Prelude
 
@@ -22,17 +22,12 @@ import Control.Comonad (class Comonad, duplicate, extract)
 import Control.Comonad.Cofree (Cofree)
 import Control.Comonad.Env.Trans (EnvT)
 
-import Data.Functor.Mu (Mu, unroll)
 import Data.Traversable (class Traversable, traverse)
 import Data.Tuple (Tuple(..))
+
 import Matryoshka.Algebra (Algebra, AlgebraM, ElgotAlgebra, GAlgebra, GAlgebraM)
+import Matryoshka.Class.Recursive (class Recursive, project)
 import Matryoshka.DistributiveLaw (DistributiveLaw, distGHisto, distHisto, distZygo, distZygoT)
-
-class Functor f ⇐ Recursive t f | t → f where
-  project ∷ t → f t
-
-instance recursiveMu ∷ Functor f ⇒ Recursive (Mu f) f where
-  project = unroll
 
 cata ∷ ∀ f t a. Recursive t f ⇒ Algebra f a → t → a
 cata f = go
@@ -59,6 +54,17 @@ gcata
 gcata k g = g <<< extract <<< go
   where
   go t = k $ map (duplicate <<< map g <<< go) (project t)
+
+gcataM
+  ∷ ∀ f t m w a
+  . (Recursive t f, Monad m, Comonad w, Traversable f, Traversable w)
+  ⇒ DistributiveLaw f w
+  → GAlgebraM w m f a
+  → t
+  → m a
+gcataM k g = g <<< extract <=< loop
+  where
+  loop t = k <$> traverse (map duplicate <<< traverse g <=< loop) (project t)
 
 elgotCata
   ∷ ∀ f t w a

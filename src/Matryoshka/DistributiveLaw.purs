@@ -22,12 +22,14 @@ import Control.Comonad (class Comonad, extract)
 import Control.Comonad.Trans.Class (lower)
 import Control.Comonad.Env.Trans (EnvT(..), runEnvT)
 import Control.Comonad.Cofree (Cofree, unfoldCofree, tail)
+import Control.Monad.Free (Free, liftF, resume)
 
 import Data.Tuple (Tuple(..), fst, snd)
+import Data.Either (Either(..))
 
 import Matryoshka.Algebra (Algebra)
 
-type DistributiveLaw f w = ∀ a. f (w a) → w (f a)
+type DistributiveLaw f g = ∀ a. f (g a) → g (f a)
 
 distZygo ∷ ∀ f a. Functor f ⇒ Algebra f a → DistributiveLaw f (Tuple a)
 distZygo g m = Tuple (g (map fst m)) (map snd m)
@@ -41,7 +43,7 @@ distZygoT
 distZygoT g k fe =
   EnvT $ Tuple (g (fst <<< runEnvT <$> fe)) (k (lower <$> fe))
 
-distHisto ∷ forall f. Functor f ⇒ DistributiveLaw f (Cofree f)
+distHisto ∷ ∀ f. Functor f ⇒ DistributiveLaw f (Cofree f)
 distHisto = distGHisto id
 
 distGHisto
@@ -50,3 +52,15 @@ distGHisto
   ⇒ DistributiveLaw f h
   → DistributiveLaw f (Cofree h)
 distGHisto k x = unfoldCofree x (map extract) (k <<< map tail)
+
+distFutu ∷ ∀ f a. Functor f ⇒ Free f (f a) → f (Free f a)
+distFutu = distGFutu id
+
+distGFutu
+  ∷ ∀ f h
+  . (Functor f, Functor h)
+  ⇒ DistributiveLaw h f
+  → DistributiveLaw (Free h) f
+distGFutu k f = case resume f of
+  Left as → join <<< liftF <$> k (distGFutu k <$> as)
+  Right b → pure <$> b
