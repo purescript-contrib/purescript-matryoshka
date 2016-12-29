@@ -37,13 +37,13 @@ import Matryoshka.DistributiveLaw (DistributiveLaw, distGHisto, distHisto, distZ
 import Matryoshka.Util (mapR, traverseR)
 import Matryoshka.Transform (AlgebraicGTransform, Transform, TransformM)
 
-cata ∷ ∀ f t a. Recursive t f ⇒ Algebra f a → t → a
+cata ∷ ∀ t f a. Recursive t f ⇒ Algebra f a → t → a
 cata f = go
   where
   go t = f $ map go $ project t
 
 cataM
-  ∷ ∀ f t m a
+  ∷ ∀ t f m a
   . (Recursive t f, Monad m, Traversable f)
   ⇒ AlgebraM m f a
   → t
@@ -53,7 +53,7 @@ cataM f = go
   go t = f =<< traverse go (project t)
 
 gcata
-  ∷ ∀ f t w a
+  ∷ ∀ t f w a
   . (Recursive t f, Comonad w)
   ⇒ DistributiveLaw f w
   → GAlgebra w f a
@@ -64,7 +64,7 @@ gcata k g = g <<< extract <<< go
   go t = k $ map (duplicate <<< map g <<< go) (project t)
 
 gcataM
-  ∷ ∀ f t m w a
+  ∷ ∀ t f w m a
   . (Recursive t f, Monad m, Comonad w, Traversable f, Traversable w)
   ⇒ DistributiveLaw f w
   → GAlgebraM w m f a
@@ -75,7 +75,7 @@ gcataM k g = g <<< extract <=< loop
   loop t = k <$> traverse (map duplicate <<< traverse g <=< loop) (project t)
 
 elgotCata
-  ∷ ∀ f t w a
+  ∷ ∀ t f w a
   . (Recursive t f, Comonad w)
   ⇒ DistributiveLaw f w
   → ElgotAlgebra w f a
@@ -86,7 +86,7 @@ elgotCata k g = g <<< go
   go t = k $ map (map g <<< duplicate <<< go) (project t)
 
 transCata
-  ∷ ∀ f t g u
+  ∷ ∀ t f u g
   . (Recursive t f, Corecursive u g)
   ⇒ Transform u f g
   → t
@@ -96,7 +96,7 @@ transCata f = go
   go t = mapR (f <<< map go) t
 
 transCataT
-  ∷ ∀ f t
+  ∷ ∀ t f
   . (Recursive t f, Corecursive t f)
   ⇒ (t → t)
   → t
@@ -106,7 +106,7 @@ transCataT f = go
   go t = f $ mapR (map go) t
 
 transCataM
-  ∷ ∀ f t g u m
+  ∷ ∀ t f u g m
   . (Recursive t f, Corecursive u g, Monad m, Traversable f)
   ⇒ TransformM m u f g
   → t
@@ -116,7 +116,7 @@ transCataM f = go
   go t = traverseR (f <=< traverse go) t
 
 transCataTM
-  ∷ ∀ f t m
+  ∷ ∀ t f m
   . (Recursive t f, Corecursive t f, Monad m, Traversable f)
   ⇒ (t → m t)
   → t
@@ -150,7 +150,7 @@ topDownCataM f = go
     Tuple a' tf → traverseR (traverse (go a')) tf
 
 prepro
-  ∷ ∀ f t a
+  ∷ ∀ t f a
   . (Recursive t f, Corecursive t f)
   ⇒ (f ~> f)
   → Algebra f a
@@ -161,7 +161,7 @@ prepro f g = go
   go t = g $ (go <<< cata (embed <<< f)) <$> project t
 
 gprepro
-  ∷ ∀ f t w a
+  ∷ ∀ t f w a
   . (Recursive t f, Corecursive t f, Comonad w)
   ⇒ DistributiveLaw f w
   → (f ~> f)
@@ -173,7 +173,7 @@ gprepro f g h = extract <<< go
   go t = h <$> f (duplicate <<< go <<< cata (embed <<< g) <$> project t)
 
 transPrepro
-  ∷ forall f t g u
+  ∷ ∀ t f u g
   . (Recursive t f, Corecursive t f, Corecursive u g)
   ⇒ (f ~> f)
   → Transform u f g
@@ -183,16 +183,14 @@ transPrepro f g = go
   where
   go t = mapR (g <<< map (go <<< transCata f)) t
 
-para ∷ ∀ f t a. Recursive t f ⇒ GAlgebra (Tuple t) f a → t → a
+para ∷ ∀ t f a. Recursive t f ⇒ GAlgebra (Tuple t) f a → t → a
 para f = go
   where
-  go ∷ t → a
   go t = f (g <$> project t)
-  g ∷ t → Tuple t a
   g t = Tuple t (go t)
 
 paraM
-  ∷ ∀ f t m a
+  ∷ ∀ t f m a
   . (Recursive t f, Monad m, Traversable f)
   ⇒ GAlgebraM (Tuple t) m f a
   → t
@@ -202,7 +200,7 @@ paraM f = go
   go t = f =<< traverse (map (Tuple t) <<< go) (project t)
 
 gpara
-  ∷ ∀ f t w a
+  ∷ ∀ t f w a
   . (Recursive t f, Corecursive t f, Comonad w)
   ⇒ DistributiveLaw f w
   → GAlgebra (EnvT t w) f a
@@ -210,13 +208,13 @@ gpara
   → a
 gpara = gzygo embed
 
-elgotPara ∷ ∀ f t a. Recursive t f ⇒ ElgotAlgebra (Tuple t) f a → t → a
+elgotPara ∷ ∀ t f a. Recursive t f ⇒ ElgotAlgebra (Tuple t) f a → t → a
 elgotPara f = go
   where
   go t = f (Tuple t (go <$> project t))
 
 transPara
-  ∷ forall f t g u
+  ∷ ∀ t f u g
   . (Recursive t f, Corecursive u g)
   ⇒ AlgebraicGTransform (Tuple t) u f g
   → t
@@ -226,7 +224,7 @@ transPara f = go
   go t = mapR (f <<< map (id &&& go)) t
 
 transParaT
-  ∷ ∀ f t
+  ∷ ∀ t f
   . (Recursive t f, Corecursive t f)
   ⇒ (t → t → t)
   → t
@@ -236,7 +234,7 @@ transParaT f = go
   go t = f t (mapR (map go) t)
 
 zygo
-  ∷ ∀ f t a b
+  ∷ ∀ t f a b
   . Recursive t f
   ⇒ Algebra f b
   → GAlgebra (Tuple b) f a
@@ -245,7 +243,7 @@ zygo
 zygo = gcata <<< distZygo
 
 gzygo
-  ∷ ∀ f t w a b
+  ∷ ∀ t f w a b
   . (Recursive t f, Comonad w)
   ⇒ Algebra f b
   → DistributiveLaw f w
@@ -255,7 +253,7 @@ gzygo
 gzygo f w = gcata (distZygoT f w)
 
 elgotZygo
-  ∷ ∀ f t a b
+  ∷ ∀ t f a b
   . Recursive t f
   ⇒ Algebra f b
   → ElgotAlgebra (Tuple b) f a
@@ -264,7 +262,7 @@ elgotZygo
 elgotZygo = elgotCata <<< distZygo
 
 gElgotZygo
-  ∷ ∀ f t w a b
+  ∷ ∀ t f w a b
   . (Recursive t f, Comonad w)
   ⇒ Algebra f b
   → DistributiveLaw f w
@@ -274,7 +272,7 @@ gElgotZygo
 gElgotZygo f w = elgotCata (distZygoT f w)
 
 mutu
-  ∷ ∀ f t a b
+  ∷ ∀ t f a b
   . Recursive t f
   ⇒ GAlgebra (Tuple a) f b
   → GAlgebra (Tuple b) f a
@@ -285,7 +283,7 @@ mutu f g = g <<< map go <<< project
   go x = Tuple (mutu g f x) (mutu f g x)
 
 histo
-  ∷ ∀ f t a
+  ∷ ∀ t f a
   . Recursive t f
   ⇒ GAlgebra (Cofree f) f a
   → t
@@ -293,7 +291,7 @@ histo
 histo = gcata distHisto
 
 ghisto
-  ∷ ∀ f t h a
+  ∷ ∀ t f h a
   . (Recursive t f, Functor h)
   ⇒ DistributiveLaw f h
   → GAlgebra (Cofree h) f a
@@ -302,7 +300,7 @@ ghisto
 ghisto g = gcata (distGHisto g)
 
 elgotHisto
-  ∷ ∀ f t a
+  ∷ ∀ t f a
   . Recursive t f
   ⇒ ElgotAlgebra (Cofree f) f a
   → t
@@ -333,16 +331,16 @@ annotateTopDownM f z = go
   where
   go t =
     let ft = project t
-    in (\h -> mkCofree h <$> traverse go ft) =<< f z ft
+    in (flip map (traverse go ft) <<< mkCofree) =<< f z ft
 
-isLeaf ∷ ∀ f t. (Recursive t f, Foldable f) ⇒ t → Boolean
+isLeaf ∷ ∀ t f. (Recursive t f, Foldable f) ⇒ t → Boolean
 isLeaf t = alaF Disj foldMap (const true) (project t)
 
-children ∷ ∀ f t. (Recursive t f, Foldable f) ⇒ t → List t
+children ∷ ∀ t f. (Recursive t f, Foldable f) ⇒ t → List t
 children = foldMap pure <<< project
 
-universe ∷ ∀ f t. (Recursive t f, Foldable f) ⇒ t → List t
+universe ∷ ∀ t f. (Recursive t f, Foldable f) ⇒ t → List t
 universe t = universe =<< children t
 
-lambek ∷ ∀ f t. (Recursive t f, Corecursive t f) ⇒ t → f t
+lambek ∷ ∀ t f. (Recursive t f, Corecursive t f) ⇒ t → f t
 lambek = cata (map embed)

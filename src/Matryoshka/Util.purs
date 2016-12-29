@@ -21,11 +21,11 @@ import Prelude
 import Matryoshka.Class.Corecursive (class Corecursive, embed)
 import Matryoshka.Class.Recursive (class Recursive, project)
 
-mapR ∷ ∀ f t g u. (Recursive t f, Corecursive u g) ⇒ (f t → g u) → t → u
+mapR ∷ ∀ t f u g. (Recursive t f, Corecursive u g) ⇒ (f t → g u) → t → u
 mapR f = embed <<< f <<< project
 
 traverseR
-  ∷ ∀ f t m g u
+  ∷ ∀ t f u g m
   . (Recursive t f, Corecursive u g, Functor m)
   ⇒ (f t → m (g u))
   → t

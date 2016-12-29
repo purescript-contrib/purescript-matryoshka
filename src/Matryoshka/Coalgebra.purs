@@ -16,12 +16,12 @@ limitations under the License.
 
 module Matryoshka.Coalgebra where
 
-type GCoalgebra n f a = a -> f (n a)
+type GCoalgebra n f a = a → f (n a)
 
-type GCoalgebraM n m f a = a -> m (f (n a))
+type GCoalgebraM n m f a = a → m (f (n a))
 
-type Coalgebra f a = a -> f a
+type Coalgebra f a = a → f a
 
-type CoalgebraM m f a = a -> m (f a)
+type CoalgebraM m f a = a → m (f a)
 
-type ElgotCoalgebra e f a = a -> e (f a)
+type ElgotCoalgebra e f a = a → e (f a)

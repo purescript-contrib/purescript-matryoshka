@@ -48,7 +48,7 @@ hylo f g = go
   go a = f $ go <$> g a
 
 hyloM
-  ∷ ∀ f a b m
+  ∷ ∀ f m a b
   . (Monad m, Traversable f)
   ⇒ AlgebraM m f b
   → CoalgebraM m f a
@@ -59,7 +59,7 @@ hyloM f g = go
   go a = f =<< traverse go =<< g a
 
 ghylo
-  ∷ ∀ f n w a b
+  ∷ ∀ f w n a b
   . (Monad n, Comonad w, Functor f)
   ⇒ DistributiveLaw f w
   → DistributiveLaw n f
@@ -72,7 +72,7 @@ ghylo w n f g = extract <<< go <<< pure
   go na = f <$> w ((duplicate <<< go <<< join) <$> n (g <$> na))
 
 ghyloM
-  ∷ ∀ f m n w a b
+  ∷ ∀ f w n m a b
   . (Monad m, Monad n, Comonad w, Traversable f, Traversable w, Traversable n)
   ⇒ DistributiveLaw f w
   → DistributiveLaw n f
@@ -85,7 +85,7 @@ ghyloM w m f g = map extract <<< h <<< pure
   h x = traverse f =<< w <$> (traverse (map duplicate <<< h <<< join) <<< m =<< traverse g x)
 
 transHylo
-  ∷ ∀ f t g h u
+  ∷ ∀ t f g h u
   . (Recursive t f, Corecursive u h, Functor g)
   ⇒ Transform u g h
   → Transform t f g
@@ -131,5 +131,5 @@ chrono
   → b
 chrono = ghylo distHisto distFutu
 
-convertTo ∷ ∀ f t r. (Recursive t f, Corecursive r f) ⇒ t → r
+convertTo ∷ ∀ t f r. (Recursive t f, Corecursive r f) ⇒ t → r
 convertTo = cata embed

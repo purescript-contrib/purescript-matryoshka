@@ -33,10 +33,10 @@ import Matryoshka.Algebra (Algebra)
 
 type DistributiveLaw f g = ∀ a. f (g a) → g (f a)
 
-distAna ∷ ∀ f. Functor f => DistributiveLaw Identity f
+distAna ∷ ∀ f. Functor f ⇒ DistributiveLaw Identity f
 distAna = map wrap <<< unwrap
 
-distCata ∷ ∀ f. Functor f => DistributiveLaw f Identity
+distCata ∷ ∀ f. Functor f ⇒ DistributiveLaw f Identity
 distCata = wrap <<< map unwrap
 
 distFutu ∷ ∀ f. Functor f ⇒ DistributiveLaw (Free f) f

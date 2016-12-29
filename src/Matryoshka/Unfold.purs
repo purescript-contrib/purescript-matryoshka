@@ -31,23 +31,23 @@ import Matryoshka.DistributiveLaw (DistributiveLaw, distAna, distFutu)
 import Matryoshka.Transform (CoalgebraicGTransform, Transform, TransformM)
 import Matryoshka.Util (mapR, traverseR)
 
-ana ∷ ∀ f t a. Corecursive t f ⇒ Coalgebra f a → a → t
+ana ∷ ∀ t f a. Corecursive t f ⇒ Coalgebra f a → a → t
 ana f = go
   where
   go a = embed (go <$> f a)
 
 anaM
-  ∷ ∀ f t m a
+  ∷ ∀ t f m a
   . (Corecursive t f, Monad m, Traversable f)
   ⇒ CoalgebraM m f a
   → a
   → m t
 anaM f = go
   where
-  go a = f a >>= (\x -> embed `map` traverse go x)
+  go a = f a >>= (map embed <<< traverse go)
 
 gana
-  ∷ ∀ f t n a
+  ∷ ∀ t f n a
   . (Corecursive t f, Monad n)
   ⇒ DistributiveLaw n f
   → GCoalgebra n f a
@@ -58,7 +58,7 @@ gana k f = go <<< pure <<< f
   go a = embed $ map (go <<< map f <<< join) (k a)
 
 ganaM
-  ∷ ∀ f t m n a
+  ∷ ∀ t f m n a
   . (Corecursive t f, Monad m, Monad n, Traversable f, Traversable n)
   ⇒ DistributiveLaw n f
   → GCoalgebraM n m f a
@@ -69,7 +69,7 @@ ganaM k f = go <=< map pure <<< f
   go a = embed <$> traverse (go <=< traverse f <<< join) (k a)
 
 elgotAna
-  ∷ ∀ f t n a
+  ∷ ∀ t f n a
   . (Corecursive t f, Monad n)
   ⇒ DistributiveLaw n f
   → ElgotCoalgebra n f a
@@ -77,11 +77,10 @@ elgotAna
   → t
 elgotAna k f = go <<< f
   where
-  go :: n (f a) -> t
   go a = embed $ (go <<< (f =<< _)) <$> k a
 
 transAna
-  ∷ ∀ f t g u
+  ∷ ∀ t f u g
   . (Recursive t f, Corecursive u g)
   ⇒ Transform t f g
   → t
@@ -90,13 +89,13 @@ transAna f = go
   where
   go t = mapR (map go <<< f) t
 
-transAnaT ∷ ∀ f t. (Recursive t f, Corecursive t f) ⇒ (t → t) → t → t
+transAnaT ∷ ∀ t f. (Recursive t f, Corecursive t f) ⇒ (t → t) → t → t
 transAnaT f = go
   where
   go t = mapR (map go) (f t)
 
 transAnaM
-  ∷ ∀ f t g u m
+  ∷ ∀ t f u g m
   . (Recursive t f, Corecursive u g, Monad m, Traversable g)
   ⇒ TransformM m t f g
   → t
@@ -106,7 +105,7 @@ transAnaM f = go
   go t = traverseR (traverse go <=< f) t
 
 transAnaTM
-  ∷ ∀ f t m
+  ∷ ∀ t f m
   . (Recursive t f, Corecursive t f, Monad m, Traversable f)
   ⇒ Coalgebra m t
   → t
@@ -116,7 +115,7 @@ transAnaTM f = go
   go t = traverseR (traverse go) =<< f t
 
 postpro
-  ∷ forall t f a
+  ∷ ∀ t f a
   . (Recursive t f, Corecursive t f)
   ⇒ (f ~> f)
   → Coalgebra f a
@@ -137,7 +136,7 @@ gpostpro f g h = go <<< pure
   go na = embed $ (ana (g <<< project) <<< go <<< join) <$> f (h <$> na)
 
 transPostpro
-  ∷ ∀ f t g u
+  ∷ ∀ t f u g
   . (Recursive t f, Recursive u g, Corecursive u g)
   ⇒ (g ~> g)
   → Transform t f g
@@ -147,13 +146,13 @@ transPostpro f g = go
   where
   go t = mapR (map (transAna f <<< go) <<< g) t
 
-apo ∷ ∀ f t a. Corecursive t f ⇒ GCoalgebra (Either t) f a → a → t
+apo ∷ ∀ t f a. Corecursive t f ⇒ GCoalgebra (Either t) f a → a → t
 apo f = go
   where
   go a = embed $ either id go <$> f a
 
 gapo
-  ∷ ∀ f t a b
+  ∷ ∀ t f a b
   . Corecursive t f
   ⇒ Coalgebra f b
   → GCoalgebra (Either b) f a
@@ -165,7 +164,7 @@ gapo f g = go
   anaf = ana f
 
 apoM
-  ∷ ∀ f t m a
+  ∷ ∀ t f m a
   . (Corecursive t f, Monad m, Traversable f)
   ⇒ GCoalgebraM (Either t) m f a
   → a
@@ -174,13 +173,13 @@ apoM f = go
   where
   go a = embed <$> (traverse (either pure go) =<< f a)
 
-elgotApo ∷ ∀ f t a. Corecursive t f ⇒ ElgotCoalgebra (Either t) f a → a → t
+elgotApo ∷ ∀ t f a. Corecursive t f ⇒ ElgotCoalgebra (Either t) f a → a → t
 elgotApo f = go
   where
   go a = either id (embed <<< map go) $ f a
 
 transApo
-  ∷ ∀ f t g u
+  ∷ ∀ t f u g
   . (Recursive t f, Corecursive u g)
   ⇒ CoalgebraicGTransform (Either u) t f g
   → t
@@ -190,7 +189,7 @@ transApo f = go
   go t = mapR (map (either id go) <<< f) t
 
 transApoT
-  ∷ ∀ f t
+  ∷ ∀ t f
   . (Recursive t f, Corecursive t f)
   ⇒ (t → Either t t)
   → t
@@ -199,14 +198,14 @@ transApoT f = go
   where
   go t = either id (mapR (map go)) $ f t
 
-futu ∷ ∀ f t a. Corecursive t f ⇒ GCoalgebra (Free f) f a → a → t
+futu ∷ ∀ t f a. Corecursive t f ⇒ GCoalgebra (Free f) f a → a → t
 futu = gana distFutu
 
-elgotFutu ∷ ∀ f t a. Corecursive t f ⇒ ElgotCoalgebra (Free f) f a → a → t
+elgotFutu ∷ ∀ t f a. Corecursive t f ⇒ ElgotCoalgebra (Free f) f a → a → t
 elgotFutu = elgotAna distFutu
 
 futuM
-  ∷ ∀ f t m a
+  ∷ ∀ t f m a
   . (Corecursive t f, Monad m, Traversable f)
   ⇒ GCoalgebraM (Free f) m f a
   → a
@@ -216,5 +215,5 @@ futuM f = go
   go a = map embed <<< traverse loop =<< f a
   loop x = either (map embed <<< traverse loop) go (resume x)
 
-colambek ∷ ∀ f t. (Recursive t f, Corecursive t f) ⇒ f t → t
+colambek ∷ ∀ t f. (Recursive t f, Corecursive t f) ⇒ f t → t
 colambek = ana (map project)
