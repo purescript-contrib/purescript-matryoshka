@@ -25,5 +25,3 @@ type Algebra f a = f a → a
 type AlgebraM m f a = f a → m a
 
 type ElgotAlgebra w f a = w (f a) → a
-
-type ElgotAlgebraM w m f a = w (f a) → m a

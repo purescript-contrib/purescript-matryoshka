@@ -14,14 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -}
 
-module Matryoshka.Coalgebra where
+module Matryoshka.Util where
 
-type GCoalgebra n f a = a -> f (n a)
+import Prelude
 
-type GCoalgebraM n m f a = a -> m (f (n a))
+import Matryoshka.Class.Corecursive (class Corecursive, embed)
+import Matryoshka.Class.Recursive (class Recursive, project)
 
-type Coalgebra f a = a -> f a
+mapR ∷ ∀ f t g u. (Recursive t f, Corecursive u g) ⇒ (f t → g u) → t → u
+mapR f = embed <<< f <<< project
 
-type CoalgebraM m f a = a -> m (f a)
-
-type ElgotCoalgebra e f a = a -> e (f a)
+traverseR
+  ∷ ∀ f t m g u
+  . (Recursive t f, Corecursive u g, Functor m)
+  ⇒ (f t → m (g u))
+  → t
+  → m u
+traverseR f = map embed <<< f <<< project

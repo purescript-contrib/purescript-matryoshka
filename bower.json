@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "purescript-fixed-points": "^2.0.0",
-    "purescript-free": "^3.0.1",
+    "purescript-free": "^3.2.0",
     "purescript-transformers": "^2.0.2"
   }
 }
