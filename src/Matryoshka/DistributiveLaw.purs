@@ -19,47 +19,44 @@ module Matryoshka.DistributiveLaw where
 import Prelude
 
 import Control.Comonad (class Comonad, extract)
-import Control.Comonad.Trans.Class (lower)
-import Control.Comonad.Env.Trans (EnvT(..), runEnvT)
 import Control.Comonad.Cofree (Cofree, unfoldCofree, tail)
+import Control.Comonad.Env.Trans (EnvT(..), runEnvT)
+import Control.Comonad.Trans.Class (lower)
+import Control.Monad.Except (ExceptT(..), runExceptT)
 import Control.Monad.Free (Free, liftF, resume)
 
-import Data.Either (Either(..))
+import Data.Distributive (class Distributive, distribute)
+import Data.Either (Either(..), either)
 import Data.Identity (Identity)
 import Data.Newtype (unwrap, wrap)
+import Data.Traversable (class Traversable, sequence)
 import Data.Tuple (Tuple(..), fst, snd)
 
 import Matryoshka.Algebra (Algebra)
+import Matryoshka.Class.Corecursive (class Corecursive, embed)
+import Matryoshka.Class.Recursive (class Recursive, project)
+import Matryoshka.Coalgebra (Coalgebra)
 
 type DistributiveLaw f g = ∀ a. f (g a) → g (f a)
 
-distAna ∷ ∀ f. Functor f ⇒ DistributiveLaw Identity f
-distAna = map wrap <<< unwrap
+distApplicative ∷ ∀ f g. (Traversable f, Applicative g) ⇒ DistributiveLaw f g
+distApplicative = sequence
+
+distDistributive ∷ ∀ f g. (Traversable f, Distributive g) ⇒ DistributiveLaw f g
+distDistributive = distribute
 
 distCata ∷ ∀ f. Functor f ⇒ DistributiveLaw f Identity
 distCata = wrap <<< map unwrap
 
-distFutu ∷ ∀ f. Functor f ⇒ DistributiveLaw (Free f) f
-distFutu = distGFutu id
+distPara ∷ ∀ t f. Corecursive t f ⇒ DistributiveLaw f (Tuple t)
+distPara = distZygo embed
 
-distGFutu
-  ∷ ∀ f h
-  . (Functor f, Functor h)
-  ⇒ DistributiveLaw h f
-  → DistributiveLaw (Free h) f
-distGFutu k f = case resume f of
-  Left as → join <<< liftF <$> k (distGFutu k <$> as)
-  Right b → pure <$> b
-
-distHisto ∷ ∀ f. Functor f ⇒ DistributiveLaw f (Cofree f)
-distHisto = distGHisto id
-
-distGHisto
-  ∷ ∀ f h
-  . (Functor f, Functor h)
-  ⇒ DistributiveLaw f h
-  → DistributiveLaw f (Cofree h)
-distGHisto k x = unfoldCofree x (map extract) (k <<< map tail)
+distParaT
+  ∷ ∀ t f w
+  . (Corecursive t f, Comonad w)
+  ⇒ DistributiveLaw f w
+  → DistributiveLaw f (EnvT t w)
+distParaT = distZygoT embed
 
 distZygo ∷ ∀ f a. Functor f ⇒ Algebra f a → DistributiveLaw f (Tuple a)
 distZygo g m = Tuple (g (map fst m)) (map snd m)
@@ -72,3 +69,42 @@ distZygoT
   → DistributiveLaw f (EnvT a w)
 distZygoT g k fe =
   EnvT $ Tuple (g (fst <<< runEnvT <$> fe)) (k (lower <$> fe))
+
+distHisto ∷ ∀ f. Functor f ⇒ DistributiveLaw f (Cofree f)
+distHisto = distGHisto id
+
+distGHisto
+  ∷ ∀ f h
+  . (Functor f, Functor h)
+  ⇒ DistributiveLaw f h
+  → DistributiveLaw f (Cofree h)
+distGHisto k x = unfoldCofree x (map extract) (k <<< map tail)
+
+distAna ∷ ∀ f. Functor f ⇒ DistributiveLaw Identity f
+distAna = map wrap <<< unwrap
+
+distApo ∷ ∀ t f. Recursive t f ⇒ DistributiveLaw (Either t) f
+distApo = distGApo project
+
+distGApo ∷ ∀ f a. Functor f ⇒ Coalgebra f a → DistributiveLaw (Either a) f
+distGApo f = either (map Left <<< f) (map Right)
+
+distGApoT
+  ∷ ∀ f m a
+  . (Functor f, Functor m)
+  ⇒ Coalgebra f a
+  → DistributiveLaw m f
+  → DistributiveLaw (ExceptT a m) f
+distGApoT g k = map ExceptT <<< k <<< map (distGApo g) <<< runExceptT
+
+distFutu ∷ ∀ f. Functor f ⇒ DistributiveLaw (Free f) f
+distFutu = distGFutu id
+
+distGFutu
+  ∷ ∀ f h
+  . (Functor f, Functor h)
+  ⇒ DistributiveLaw h f
+  → DistributiveLaw (Free h) f
+distGFutu k f = case resume f of
+  Left as → join <<< liftF <$> k (distGFutu k <$> as)
+  Right b → pure <$> b
