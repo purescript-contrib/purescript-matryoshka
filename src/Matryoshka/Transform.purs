@@ -14,14 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -}
 
-module Matryoshka.Algebra where
+module Matryoshka.Transform where
 
-type GAlgebra w f a = f (w a) → a
+type Transform t f g = f t → g t
 
-type GAlgebraM w m f a = f (w a) → m a
+type TransformM m t f g = f t → m (g t)
 
-type Algebra f a = f a → a
+type AlgebraicGTransform w t f g = f (w t) → g t
 
-type AlgebraM m f a = f a → m a
-
-type ElgotAlgebra w f a = w (f a) → a
+type CoalgebraicGTransform n t f g = f t → g (n t)

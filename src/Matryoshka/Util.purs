@@ -14,14 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -}
 
-module Matryoshka.Algebra where
+module Matryoshka.Util where
 
-type GAlgebra w f a = f (w a) → a
+import Prelude
 
-type GAlgebraM w m f a = f (w a) → m a
+import Matryoshka.Class.Corecursive (class Corecursive, embed)
+import Matryoshka.Class.Recursive (class Recursive, project)
 
-type Algebra f a = f a → a
+mapR ∷ ∀ t f u g. (Recursive t f, Corecursive u g) ⇒ (f t → g u) → t → u
+mapR f = embed <<< f <<< project
 
-type AlgebraM m f a = f a → m a
-
-type ElgotAlgebra w f a = w (f a) → a
+traverseR
+  ∷ ∀ t f u g m
+  . (Recursive t f, Corecursive u g, Functor m)
+  ⇒ (f t → m (g u))
+  → t
+  → m u
+traverseR f = map embed <<< f <<< project

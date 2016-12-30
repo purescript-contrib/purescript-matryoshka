@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -}
 
-module Matryoshka.Algebra where
+module Matryoshka.Coalgebra where
 
-type GAlgebra w f a = f (w a) → a
+type GCoalgebra n f a = a → f (n a)
 
-type GAlgebraM w m f a = f (w a) → m a
+type GCoalgebraM n m f a = a → m (f (n a))
 
-type Algebra f a = f a → a
+type Coalgebra f a = a → f a
 
-type AlgebraM m f a = f a → m a
+type CoalgebraM m f a = a → m (f a)
 
-type ElgotAlgebra w f a = w (f a) → a
+type ElgotCoalgebra e f a = a → e (f a)
