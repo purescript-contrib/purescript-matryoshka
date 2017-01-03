@@ -18,15 +18,14 @@ module Matryoshka.Class.Corecursive where
 
 import Prelude
 
-import Control.Comonad (class Comonad)
 import Control.Comonad.Cofree (Cofree, mkCofree)
-import Control.Comonad.Env (EnvT, ask)
-import Control.Comonad.Trans.Class (lower)
+import Control.Comonad.Env (EnvT(..))
 import Control.Monad.Free (Free, liftF)
 
 import Data.Either (either)
 import Data.Functor.Mu (Mu, roll)
 import Data.Functor.Nu (Nu, unfold, observe)
+import Data.Tuple (Tuple(..))
 
 import Matryoshka.Pattern.CoEnvT (CoEnvT(..))
 
@@ -42,5 +41,8 @@ instance corecursiveNu ∷ Functor f ⇒ Corecursive (Nu f) f where
 instance corecursiveFree ∷ Functor f ⇒ Corecursive (Free f a) (CoEnvT a f) where
   embed (CoEnvT e) = either pure (join <<< liftF) e
 
-instance corecursiveCofree ∷ Comonad f ⇒ Corecursive (Cofree f a) (EnvT a f) where
+instance corecursiveCofree ∷ Functor f ⇒ Corecursive (Cofree f a) (EnvT a f) where
   embed et = mkCofree (ask et) (lower et)
+    where
+    ask (EnvT (Tuple e _)) = e
+    lower (EnvT (Tuple _ x)) = x
