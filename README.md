@@ -14,5 +14,6 @@ bower install purescript-matryoshka
 ## Documentation
 
 Real documentation coming soon, for now refer to the [original Matryoshka docs](https://github.com/slamdata/matryoshka/blob/master/README.md) for an explanation of the general concepts!
+A port of the example used in these docs is available [here](https://github.com/slamdata/purescript-matryoshka/blob/master/test/Main.purs).
 
 Module documentation is published on Pursuit: [http://pursuit.purescript.org/packages/purescript-matryoshka](http://pursuit.purescript.org/packages/purescript-matryoshka)
