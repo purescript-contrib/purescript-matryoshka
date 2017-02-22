@@ -1,10 +1,10 @@
-module Test.Main where
+module Test.Example.Expr where
 
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, logShow)
+import Control.Monad.Eff.Console (CONSOLE, log, logShow)
 import Data.Functor.Mu (Mu)
 import Matryoshka (class Corecursive, class Recursive, Algebra, cata, embed)
-import Prelude (class Functor, Unit, ($), (*))
+import Prelude hiding (mul)
 
 data ExprF a = Num Int | Mul a a
 
@@ -14,7 +14,7 @@ eval :: Algebra ExprF Int
 eval (Num i) = i
 eval (Mul i j) = i * j
 
-evalExpr :: forall t. (Recursive t ExprF) => t -> Int
+evalExpr :: forall t. Recursive t ExprF => t -> Int
 evalExpr = cata eval
 
 num :: forall t. Corecursive t ExprF => Int -> t
@@ -28,6 +28,7 @@ someExpr = mul (num 2) (mul (num 3) (num 4))
 
 type Expr = Mu ExprF
 
-main :: forall t. Eff (console :: CONSOLE | t) Unit
-main = do
+exprExample :: forall t. Eff (console :: CONSOLE | t) Unit
+exprExample = do
+  log "expr example"
   logShow $ evalExpr (someExpr :: Expr)
