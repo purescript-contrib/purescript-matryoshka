@@ -44,7 +44,9 @@ cata f = go
 
 cataM
   ∷ ∀ t f m a
-  . (Recursive t f, Monad m, Traversable f)
+  . Recursive t f
+  ⇒ Monad m
+  ⇒ Traversable f
   ⇒ AlgebraM m f a
   → t
   → m a
@@ -54,7 +56,8 @@ cataM f = go
 
 gcata
   ∷ ∀ t f w a
-  . (Recursive t f, Comonad w)
+  . Recursive t f
+  ⇒ Comonad w
   ⇒ DistributiveLaw f w
   → GAlgebra w f a
   → t
@@ -65,7 +68,11 @@ gcata k g = g <<< extract <<< go
 
 gcataM
   ∷ ∀ t f w m a
-  . (Recursive t f, Monad m, Comonad w, Traversable f, Traversable w)
+  . Recursive t f
+  ⇒ Monad m
+  ⇒ Comonad w
+  ⇒ Traversable f
+  ⇒ Traversable w
   ⇒ DistributiveLaw f w
   → GAlgebraM w m f a
   → t
@@ -76,7 +83,8 @@ gcataM k g = g <<< extract <=< loop
 
 elgotCata
   ∷ ∀ t f w a
-  . (Recursive t f, Comonad w)
+  . Recursive t f
+  ⇒ Comonad w
   ⇒ DistributiveLaw f w
   → ElgotAlgebra w f a
   → t
@@ -87,7 +95,8 @@ elgotCata k g = g <<< go
 
 transCata
   ∷ ∀ t f u g
-  . (Recursive t f, Corecursive u g)
+  . Recursive t f
+  ⇒ Corecursive u g
   ⇒ Transform u f g
   → t
   → u
@@ -97,7 +106,8 @@ transCata f = go
 
 transCataT
   ∷ ∀ t f
-  . (Recursive t f, Corecursive t f)
+  . Recursive t f
+  ⇒ Corecursive t f
   ⇒ (t → t)
   → t
   → t
@@ -107,7 +117,10 @@ transCataT f = go
 
 transCataM
   ∷ ∀ t f u g m
-  . (Recursive t f, Corecursive u g, Monad m, Traversable f)
+  . Recursive t f
+  ⇒ Corecursive u g
+  ⇒ Monad m
+  ⇒ Traversable f
   ⇒ TransformM m u f g
   → t
   → m u
@@ -117,7 +130,10 @@ transCataM f = go
 
 transCataTM
   ∷ ∀ t f m
-  . (Recursive t f, Corecursive t f, Monad m, Traversable f)
+  . Recursive t f
+  ⇒ Corecursive t f
+  ⇒ Monad m
+  ⇒ Traversable f
   ⇒ (t → m t)
   → t
   → m t
@@ -127,7 +143,8 @@ transCataTM f = go
 
 topDownCata
   ∷ ∀ t f a
-  . (Recursive t f, Corecursive t f)
+  . Recursive t f
+  ⇒ Corecursive t f
   ⇒ (a → t → Tuple a t)
   → a
   → t
@@ -139,7 +156,10 @@ topDownCata f = go
 
 topDownCataM
   ∷ ∀ t f m a
-  . (Recursive t f, Corecursive t f, Monad m, Traversable f)
+  . Recursive t f
+  ⇒ Corecursive t f
+  ⇒ Monad m
+  ⇒ Traversable f
   ⇒ (a → t → m (Tuple a t))
   → a
   → t
@@ -151,7 +171,8 @@ topDownCataM f = go
 
 prepro
   ∷ ∀ t f a
-  . (Recursive t f, Corecursive t f)
+  . Recursive t f
+  ⇒ Corecursive t f
   ⇒ (f ~> f)
   → Algebra f a
   → t
@@ -162,7 +183,9 @@ prepro f g = go
 
 gprepro
   ∷ ∀ t f w a
-  . (Recursive t f, Corecursive t f, Comonad w)
+  . Recursive t f
+  ⇒ Corecursive t f
+  ⇒ Comonad w
   ⇒ DistributiveLaw f w
   → (f ~> f)
   → GAlgebra w f a
@@ -174,7 +197,9 @@ gprepro f g h = extract <<< go
 
 transPrepro
   ∷ ∀ t f u g
-  . (Recursive t f, Corecursive t f, Corecursive u g)
+  . Recursive t f
+  ⇒ Corecursive t f
+  ⇒ Corecursive u g
   ⇒ (f ~> f)
   → Transform u f g
   → t
@@ -191,7 +216,9 @@ para f = go
 
 paraM
   ∷ ∀ t f m a
-  . (Recursive t f, Monad m, Traversable f)
+  . Recursive t f
+  ⇒ Monad m
+  ⇒ Traversable f
   ⇒ GAlgebraM (Tuple t) m f a
   → t
   → m a
@@ -201,7 +228,9 @@ paraM f = go
 
 gpara
   ∷ ∀ t f w a
-  . (Recursive t f, Corecursive t f, Comonad w)
+  . Recursive t f
+  ⇒ Corecursive t f
+  ⇒ Comonad w
   ⇒ DistributiveLaw f w
   → GAlgebra (EnvT t w) f a
   → t
@@ -215,7 +244,8 @@ elgotPara f = go
 
 transPara
   ∷ ∀ t f u g
-  . (Recursive t f, Corecursive u g)
+  . Recursive t f
+  ⇒ Corecursive u g
   ⇒ AlgebraicGTransform (Tuple t) u f g
   → t
   → u
@@ -225,7 +255,8 @@ transPara f = go
 
 transParaT
   ∷ ∀ t f
-  . (Recursive t f, Corecursive t f)
+  . Recursive t f
+  ⇒ Corecursive t f
   ⇒ (t → t → t)
   → t
   → t
@@ -244,7 +275,8 @@ zygo = gcata <<< distZygo
 
 gzygo
   ∷ ∀ t f w a b
-  . (Recursive t f, Comonad w)
+  . Recursive t f
+  ⇒ Comonad w
   ⇒ Algebra f b
   → DistributiveLaw f w
   → GAlgebra (EnvT b w) f a
@@ -263,7 +295,8 @@ elgotZygo = elgotCata <<< distZygo
 
 gElgotZygo
   ∷ ∀ t f w a b
-  . (Recursive t f, Comonad w)
+  . Recursive t f
+  ⇒ Comonad w
   ⇒ Algebra f b
   → DistributiveLaw f w
   → ElgotAlgebra (EnvT b w) f a
@@ -292,7 +325,8 @@ histo = gcata distHisto
 
 ghisto
   ∷ ∀ t f h a
-  . (Recursive t f, Functor h)
+  . Recursive t f
+  ⇒ Functor h
   ⇒ DistributiveLaw f h
   → GAlgebra (Cofree h) f a
   → t
@@ -322,7 +356,9 @@ annotateTopDown f z = go
 
 annotateTopDownM
   ∷ ∀ t f m a
-  . (Recursive t f, Monad m, Traversable f)
+  . Recursive t f
+  ⇒ Monad m
+  ⇒ Traversable f
   ⇒ (a → f t → m a)
   → a
   → t
@@ -333,14 +369,14 @@ annotateTopDownM f z = go
     let ft = project t
     in (flip map (traverse go ft) <<< mkCofree) =<< f z ft
 
-isLeaf ∷ ∀ t f. (Recursive t f, Foldable f) ⇒ t → Boolean
+isLeaf ∷ ∀ t f. Recursive t f ⇒ Foldable f ⇒ t → Boolean
 isLeaf t = alaF Disj foldMap (const true) (project t)
 
-children ∷ ∀ t f. (Recursive t f, Foldable f) ⇒ t → List t
+children ∷ ∀ t f. Recursive t f ⇒ Foldable f ⇒ t → List t
 children = foldMap pure <<< project
 
-universe ∷ ∀ t f. (Recursive t f, Foldable f) ⇒ t → List t
+universe ∷ ∀ t f. Recursive t f ⇒ Foldable f ⇒ t → List t
 universe t = universe =<< children t
 
-lambek ∷ ∀ t f. (Recursive t f, Corecursive t f) ⇒ t → f t
+lambek ∷ ∀ t f. Recursive t f ⇒ Corecursive t f ⇒ t → f t
 lambek = cata (map embed)
