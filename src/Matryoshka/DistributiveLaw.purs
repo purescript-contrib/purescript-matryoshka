@@ -39,10 +39,10 @@ import Matryoshka.Coalgebra (Coalgebra)
 
 type DistributiveLaw f g = ∀ a. f (g a) → g (f a)
 
-distApplicative ∷ ∀ f g. (Traversable f, Applicative g) ⇒ DistributiveLaw f g
+distApplicative ∷ ∀ f g. Traversable f ⇒ Applicative g ⇒ DistributiveLaw f g
 distApplicative = sequence
 
-distDistributive ∷ ∀ f g. (Traversable f, Distributive g) ⇒ DistributiveLaw f g
+distDistributive ∷ ∀ f g. Traversable f ⇒ Distributive g ⇒ DistributiveLaw f g
 distDistributive = distribute
 
 distCata ∷ ∀ f. Functor f ⇒ DistributiveLaw f Identity
@@ -53,7 +53,8 @@ distPara = distZygo embed
 
 distParaT
   ∷ ∀ t f w
-  . (Corecursive t f, Comonad w)
+  . Corecursive t f
+  ⇒ Comonad w
   ⇒ DistributiveLaw f w
   → DistributiveLaw f (EnvT t w)
 distParaT = distZygoT embed
@@ -63,7 +64,8 @@ distZygo g m = Tuple (g (map fst m)) (map snd m)
 
 distZygoT
   ∷ ∀ f w a
-  . (Functor f, Comonad w)
+  . Functor f
+  ⇒ Comonad w
   ⇒ Algebra f a
   → DistributiveLaw f w
   → DistributiveLaw f (EnvT a w)
@@ -75,10 +77,11 @@ distHisto = distGHisto id
 
 distGHisto
   ∷ ∀ f h
-  . (Functor f, Functor h)
+  . Functor f
+  ⇒ Functor h
   ⇒ DistributiveLaw f h
   → DistributiveLaw f (Cofree h)
-distGHisto k x = unfoldCofree x (map extract) (k <<< map tail)
+distGHisto k = unfoldCofree (map extract) (k <<< map tail)
 
 distAna ∷ ∀ f. Functor f ⇒ DistributiveLaw Identity f
 distAna = map wrap <<< unwrap
@@ -91,7 +94,8 @@ distGApo f = either (map Left <<< f) (map Right)
 
 distGApoT
   ∷ ∀ f m a
-  . (Functor f, Functor m)
+  . Functor f
+  ⇒ Functor m
   ⇒ Coalgebra f a
   → DistributiveLaw m f
   → DistributiveLaw (ExceptT a m) f
@@ -102,7 +106,8 @@ distFutu = distGFutu id
 
 distGFutu
   ∷ ∀ f h
-  . (Functor f, Functor h)
+  . Functor f
+  ⇒ Functor h
   ⇒ DistributiveLaw h f
   → DistributiveLaw (Free h) f
 distGFutu k f = case resume f of

@@ -38,7 +38,9 @@ ana f = go
 
 anaM
   ∷ ∀ t f m a
-  . (Corecursive t f, Monad m, Traversable f)
+  . Corecursive t f
+  ⇒ Monad m
+  ⇒ Traversable f
   ⇒ CoalgebraM m f a
   → a
   → m t
@@ -48,7 +50,8 @@ anaM f = go
 
 gana
   ∷ ∀ t f n a
-  . (Corecursive t f, Monad n)
+  . Corecursive t f
+  ⇒ Monad n
   ⇒ DistributiveLaw n f
   → GCoalgebra n f a
   → a
@@ -59,7 +62,11 @@ gana k f = go <<< pure <<< f
 
 ganaM
   ∷ ∀ t f m n a
-  . (Corecursive t f, Monad m, Monad n, Traversable f, Traversable n)
+  . Corecursive t f
+  ⇒ Monad m
+  ⇒ Monad n
+  ⇒ Traversable f
+  ⇒ Traversable n
   ⇒ DistributiveLaw n f
   → GCoalgebraM n m f a
   → a
@@ -70,7 +77,8 @@ ganaM k f = go <=< map pure <<< f
 
 elgotAna
   ∷ ∀ t f n a
-  . (Corecursive t f, Monad n)
+  . Corecursive t f
+  ⇒ Monad n
   ⇒ DistributiveLaw n f
   → ElgotCoalgebra n f a
   → a
@@ -81,7 +89,8 @@ elgotAna k f = go <<< f
 
 transAna
   ∷ ∀ t f u g
-  . (Recursive t f, Corecursive u g)
+  . Recursive t f
+  ⇒ Corecursive u g
   ⇒ Transform t f g
   → t
   → u
@@ -89,14 +98,17 @@ transAna f = go
   where
   go t = mapR (map go <<< f) t
 
-transAnaT ∷ ∀ t f. (Recursive t f, Corecursive t f) ⇒ (t → t) → t → t
+transAnaT ∷ ∀ t f. Recursive t f ⇒ Corecursive t f ⇒ (t → t) → t → t
 transAnaT f = go
   where
   go t = mapR (map go) (f t)
 
 transAnaM
   ∷ ∀ t f u g m
-  . (Recursive t f, Corecursive u g, Monad m, Traversable g)
+  . Recursive t f
+  ⇒ Corecursive u g
+  ⇒ Monad m
+  ⇒ Traversable g
   ⇒ TransformM m t f g
   → t
   → m u
@@ -106,7 +118,10 @@ transAnaM f = go
 
 transAnaTM
   ∷ ∀ t f m
-  . (Recursive t f, Corecursive t f, Monad m, Traversable f)
+  . Recursive t f
+  ⇒ Corecursive t f
+  ⇒ Monad m
+  ⇒ Traversable f
   ⇒ Coalgebra m t
   → t
   → m t
@@ -116,7 +131,8 @@ transAnaTM f = go
 
 postpro
   ∷ ∀ t f a
-  . (Recursive t f, Corecursive t f)
+  . Recursive t f
+  ⇒ Corecursive t f
   ⇒ (f ~> f)
   → Coalgebra f a
   → a
@@ -125,7 +141,9 @@ postpro f g = gpostpro distAna f (map Identity <<< g)
 
 gpostpro
   ∷ ∀ t f n a
-  . (Recursive t f, Corecursive t f, Monad n)
+  . Recursive t f
+  ⇒ Corecursive t f
+  ⇒ Monad n
   ⇒ DistributiveLaw n f
   → (f ~> f)
   → GCoalgebra n f a
@@ -137,7 +155,9 @@ gpostpro f g h = go <<< pure
 
 transPostpro
   ∷ ∀ t f u g
-  . (Recursive t f, Recursive u g, Corecursive u g)
+  . Recursive t f
+  ⇒ Recursive u g
+  ⇒ Corecursive u g
   ⇒ (g ~> g)
   → Transform t f g
   → t
@@ -165,7 +185,9 @@ gapo f g = go
 
 apoM
   ∷ ∀ t f m a
-  . (Corecursive t f, Monad m, Traversable f)
+  . Corecursive t f
+  ⇒ Monad m
+  ⇒ Traversable f
   ⇒ GCoalgebraM (Either t) m f a
   → a
   → m t
@@ -180,7 +202,8 @@ elgotApo f = go
 
 transApo
   ∷ ∀ t f u g
-  . (Recursive t f, Corecursive u g)
+  . Recursive t f
+  ⇒ Corecursive u g
   ⇒ CoalgebraicGTransform (Either u) t f g
   → t
   → u
@@ -190,7 +213,8 @@ transApo f = go
 
 transApoT
   ∷ ∀ t f
-  . (Recursive t f, Corecursive t f)
+  . Recursive t f
+  ⇒ Corecursive t f
   ⇒ (t → Either t t)
   → t
   → t
@@ -206,7 +230,9 @@ elgotFutu = elgotAna distFutu
 
 futuM
   ∷ ∀ t f m a
-  . (Corecursive t f, Monad m, Traversable f)
+  . Corecursive t f
+  ⇒ Monad m
+  ⇒ Traversable f
   ⇒ GCoalgebraM (Free f) m f a
   → a
   → m t
@@ -215,5 +241,5 @@ futuM f = go
   go a = map embed <<< traverse loop =<< f a
   loop x = either (map embed <<< traverse loop) go (resume x)
 
-colambek ∷ ∀ t f. (Recursive t f, Corecursive t f) ⇒ f t → t
+colambek ∷ ∀ t f. Recursive t f ⇒ Corecursive t f ⇒ f t → t
 colambek = ana (map project)

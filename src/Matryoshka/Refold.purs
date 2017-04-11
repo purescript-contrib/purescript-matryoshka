@@ -49,7 +49,8 @@ hylo f g = go
 
 hyloM
   ∷ ∀ f m a b
-  . (Monad m, Traversable f)
+  . Monad m
+  ⇒ Traversable f
   ⇒ AlgebraM m f b
   → CoalgebraM m f a
   → a
@@ -60,7 +61,9 @@ hyloM f g = go
 
 ghylo
   ∷ ∀ f w n a b
-  . (Monad n, Comonad w, Functor f)
+  . Monad n
+  ⇒ Comonad w
+  ⇒ Functor f
   ⇒ DistributiveLaw f w
   → DistributiveLaw n f
   → GAlgebra w f b
@@ -73,7 +76,12 @@ ghylo w n f g = extract <<< go <<< pure
 
 ghyloM
   ∷ ∀ f w n m a b
-  . (Monad m, Monad n, Comonad w, Traversable f, Traversable w, Traversable n)
+  . Monad m
+  ⇒ Monad n
+  ⇒ Comonad w
+  ⇒ Traversable f
+  ⇒ Traversable w
+  ⇒ Traversable n
   ⇒ DistributiveLaw f w
   → DistributiveLaw n f
   → GAlgebraM w m f b
@@ -86,7 +94,9 @@ ghyloM w m f g = map extract <<< h <<< pure
 
 transHylo
   ∷ ∀ t f g h u
-  . (Recursive t f, Corecursive u h, Functor g)
+  . Recursive t f
+  ⇒ Corecursive u h
+  ⇒ Functor g
   ⇒ Transform u g h
   → Transform t f g
   → t
@@ -115,7 +125,8 @@ codyna f = ghylo distCata distFutu (lmap (map unwrap) f)
 
 codynaM
   ∷ ∀ f m a b
-  . (Monad m, Traversable f)
+  . Monad m
+  ⇒ Traversable f
   ⇒ AlgebraM m f b
   → GCoalgebraM (Free f) m f a
   → a
@@ -131,5 +142,5 @@ chrono
   → b
 chrono = ghylo distHisto distFutu
 
-convertTo ∷ ∀ t f r. (Recursive t f, Corecursive r f) ⇒ t → r
+convertTo ∷ ∀ t f r. Recursive t f ⇒ Corecursive r f ⇒ t → r
 convertTo = cata embed
