@@ -2,8 +2,8 @@ module Test.Example.List where
 
 import Prelude
 
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log, logShow)
+import Effect (Effect)
+import Effect.Console (log, logShow)
 
 import Data.Functor.Mu (Mu)
 import Data.TacitString (TacitString)
@@ -36,7 +36,7 @@ fac = hylo prod count
 
 type List a = Mu (ListF a)
 
-listExample :: forall t. Eff (console :: CONSOLE | t) Unit
+listExample :: Effect Unit
 listExample = do
   log "list example"
   let someList = cons 1 (cons 2 (cons 3 (cons 4 nil)))
