@@ -73,7 +73,7 @@ distZygoT g k fe =
   EnvT $ Tuple (g (fst <<< runEnvT <$> fe)) (k (lower <$> fe))
 
 distHisto ∷ ∀ f. Functor f ⇒ DistributiveLaw f (Cofree f)
-distHisto = distGHisto id
+distHisto = distGHisto identity
 
 distGHisto
   ∷ ∀ f h
@@ -102,7 +102,7 @@ distGApoT
 distGApoT g k = map ExceptT <<< k <<< map (distGApo g) <<< runExceptT
 
 distFutu ∷ ∀ f. Functor f ⇒ DistributiveLaw (Free f) f
-distFutu = distGFutu id
+distFutu = distGFutu identity
 
 distGFutu
   ∷ ∀ f h

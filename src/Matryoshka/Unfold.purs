@@ -169,7 +169,7 @@ transPostpro f g = go
 apo ∷ ∀ t f a. Corecursive t f ⇒ GCoalgebra (Either t) f a → a → t
 apo f = go
   where
-  go a = embed $ either id go <$> f a
+  go a = embed $ either identity go <$> f a
 
 gapo
   ∷ ∀ t f a b
@@ -198,7 +198,7 @@ apoM f = go
 elgotApo ∷ ∀ t f a. Corecursive t f ⇒ ElgotCoalgebra (Either t) f a → a → t
 elgotApo f = go
   where
-  go a = either id (embed <<< map go) $ f a
+  go a = either identity (embed <<< map go) $ f a
 
 transApo
   ∷ ∀ t f u g
@@ -209,7 +209,7 @@ transApo
   → u
 transApo f = go
   where
-  go t = mapR (map (either id go) <<< f) t
+  go t = mapR (map (either identity go) <<< f) t
 
 transApoT
   ∷ ∀ t f
@@ -220,7 +220,7 @@ transApoT
   → t
 transApoT f = go
   where
-  go t = either id (mapR (map go)) $ f t
+  go t = either identity (mapR (map go)) $ f t
 
 futu ∷ ∀ t f a. Corecursive t f ⇒ GCoalgebra (Free f) f a → a → t
 futu = gana distFutu

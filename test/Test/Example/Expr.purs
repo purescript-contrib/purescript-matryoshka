@@ -1,7 +1,7 @@
 module Test.Example.Expr where
 
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log, logShow)
+import Effect (Effect)
+import Effect.Console (log, logShow)
 import Data.Functor.Mu (Mu)
 import Matryoshka (class Corecursive, class Recursive, Algebra, cata, embed)
 import Prelude hiding (mul)
@@ -28,7 +28,7 @@ someExpr = mul (num 2) (mul (num 3) (num 4))
 
 type Expr = Mu ExprF
 
-exprExample :: forall t. Eff (console :: CONSOLE | t) Unit
+exprExample :: Effect Unit
 exprExample = do
   log "expr example"
   logShow $ evalExpr (someExpr :: Expr)

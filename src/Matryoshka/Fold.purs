@@ -251,7 +251,7 @@ transPara
   → u
 transPara f = go
   where
-  go t = mapR (f <<< map (id &&& go)) t
+  go t = mapR (f <<< map (identity &&& go)) t
 
 transParaT
   ∷ ∀ t f

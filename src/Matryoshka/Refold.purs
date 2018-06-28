@@ -24,7 +24,7 @@ import Control.Monad.Free (Free)
 
 import Data.Identity (Identity(..))
 import Data.Newtype (unwrap)
-import Data.Profunctor (lmap)
+import Data.Profunctor (lcmap)
 import Data.Traversable (class Traversable, traverse)
 
 import Matryoshka.Algebra (Algebra, AlgebraM, GAlgebra, GAlgebraM)
@@ -121,7 +121,7 @@ codyna
   → GCoalgebra (Free f) f a
   → a
   → b
-codyna f = ghylo distCata distFutu (lmap (map unwrap) f)
+codyna f = ghylo distCata distFutu (lcmap (map unwrap) f)
 
 codynaM
   ∷ ∀ f m a b
@@ -131,7 +131,7 @@ codynaM
   → GCoalgebraM (Free f) m f a
   → a
   → m b
-codynaM f = ghyloM distCata distFutu (lmap (map unwrap) f)
+codynaM f = ghyloM distCata distFutu (lcmap (map unwrap) f)
 
 chrono
   ∷ ∀ f a b
