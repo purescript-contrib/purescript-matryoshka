@@ -15,13 +15,13 @@
     "package.json"
   ],
   "dependencies": {
-    "purescript-prelude": "^4.0.0",
-    "purescript-fixed-points": "^5.0.0",
-    "purescript-free": "^5.0.0",
-    "purescript-transformers": "^4.1.0",
-    "purescript-profunctor": "^4.0.0"
+    "purescript-prelude": "^4.1.1",
+    "purescript-fixed-points": "^5.1.0",
+    "purescript-free": "^5.2.0",
+    "purescript-transformers": "^4.2.0",
+    "purescript-profunctor": "^4.1.0"
   },
   "devDependencies": {
-    "purescript-console": "^4.1.0"
+    "purescript-console": "^4.4.0"
   }
 }
