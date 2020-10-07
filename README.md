@@ -6,7 +6,7 @@
 [![Maintainer: garyb](https://img.shields.io/badge/maintainer-garyb-teal.svg)](https://github.com/garyb)
 [![Maintainer: thomashoneyman](https://img.shields.io/badge/maintainer-thomashoneyman-teal.svg)](https://github.com/thomashoneyman)
 
-Generalized folds, unfolds, and traversals for fixed point data structures in PureScript. (A port of [Matryoshka](https://github.com/slamdata/matryoshka)).
+Generalized folds, unfolds, and traversals for fixed point data structures in PureScript. (A port of [Matryoshka](https://github.com/precog/matryoshka)).
 
 ## Installation
 

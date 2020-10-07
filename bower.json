@@ -1,10 +1,10 @@
 {
   "name": "purescript-matryoshka",
-  "homepage": "https://github.com/slamdata/purescript-matryoshka",
+  "homepage": "https://github.com/purescript-contrib/purescript-matryoshka",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/slamdata/purescript-matryoshka.git"
+    "url": "git://github.com/purescript-contrib/purescript-matryoshka.git"
   },
   "ignore": [
     "**/.*",
