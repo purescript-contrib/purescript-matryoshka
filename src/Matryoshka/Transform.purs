@@ -16,10 +16,14 @@ limitations under the License.
 
 module Matryoshka.Transform where
 
+type Transform :: Type -> (Type -> Type) -> (Type -> Type) -> Type
 type Transform t f g = f t → g t
 
+type TransformM :: (Type -> Type) -> Type -> (Type -> Type) -> (Type -> Type) -> Type
 type TransformM m t f g = f t → m (g t)
 
+type AlgebraicGTransform :: (Type -> Type) -> Type -> (Type -> Type) -> (Type -> Type) -> Type
 type AlgebraicGTransform w t f g = f (w t) → g t
 
+type CoalgebraicGTransform :: (Type -> Type) -> Type -> (Type -> Type) -> (Type -> Type) -> Type
 type CoalgebraicGTransform n t f g = f t → g (n t)

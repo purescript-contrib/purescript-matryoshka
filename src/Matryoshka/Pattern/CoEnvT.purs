@@ -25,6 +25,7 @@ import Data.Either (Either)
 import Data.Newtype (class Newtype)
 import Data.Bifunctor (lmap)
 
+newtype CoEnvT :: Type -> (Type -> Type) -> Type -> Type
 newtype CoEnvT e m a = CoEnvT (Either e (m a))
 
 runEnvT ∷ ∀ e m a. CoEnvT e m a → Either e (m a)

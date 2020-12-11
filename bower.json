@@ -15,13 +15,13 @@
     "package.json"
   ],
   "dependencies": {
-    "purescript-prelude": "^4.1.1",
-    "purescript-fixed-points": "^5.1.0",
-    "purescript-free": "^5.2.0",
-    "purescript-transformers": "^4.2.0",
-    "purescript-profunctor": "^4.1.0"
+    "purescript-prelude": "master",
+    "purescript-fixed-points": "master",
+    "purescript-free": "master",
+    "purescript-transformers": "master",
+    "purescript-profunctor": "master"
   },
   "devDependencies": {
-    "purescript-console": "^4.4.0"
+    "purescript-console": "master"
   }
 }
