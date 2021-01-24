@@ -5,20 +5,23 @@ Notable changes to this project are documented in this file. The format is based
 ## [Unreleased]
 
 Breaking changes (😱!!!):
+- Added support for PureScript 0.14 and dropped support for all previous versions (#20)
 
 New features:
 
 Bugfixes:
 
 Other improvements:
+- Changed default branch to `main` from `master`
+- Updated to comply with Contributors library guidelines by adding new issue and pull request templates, updating documentation, and migrating to Spago for local development and CI (#15)
 
 ## [v0.4.0](https://github.com/purescript-contrib/purescript-matryoshka/releases/tag/v0.4.0) - 2018-06-28
 
-- Updates for PS@0.12 @xgrommx
+- Updated for PureScript 0.12 (@xgrommx)
 
 ## [v0.3.0](https://github.com/purescript-contrib/purescript-matryoshka/releases/tag/v0.3.0) - 2017-04-11
 
-- Updates for PureScript v0.11
+- Updated for PureScript 0.11
 
 ## [v0.2.0](https://github.com/purescript-contrib/purescript-matryoshka/releases/tag/v0.2.0) - 2017-03-06
 
