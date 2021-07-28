@@ -9,6 +9,7 @@ Breaking changes:
 New features:
 
 Bugfixes:
+- Updated dependencies to clear build errors related to unlisted dependencies (#24)
 
 Other improvements:
 
