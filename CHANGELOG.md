@@ -9,9 +9,9 @@ Breaking changes:
 New features:
 
 Bugfixes:
-- Updated dependencies to clear build errors related to unlisted dependencies (#24)
 
 Other improvements:
+- Updated dependencies to clear build errors related to unlisted dependencies (#24) @flounders
 
 ## [v0.5.0](https://github.com/purescript-contrib/purescript-matryoshka/releases/tag/v0.5.0) - 2021-02-26
 
