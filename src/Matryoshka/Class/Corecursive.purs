@@ -29,19 +29,19 @@ import Data.Tuple (Tuple(..))
 
 import Matryoshka.Pattern.CoEnvT (CoEnvT(..))
 
-class Functor f ⇐ Corecursive t f | t → f where
-  embed ∷ f t → t
+class Functor f <= Corecursive t f | t -> f where
+  embed :: f t -> t
 
-instance corecursiveMu ∷ Functor f ⇒ Corecursive (Mu f) f where
+instance corecursiveMu :: Functor f => Corecursive (Mu f) f where
   embed = roll
 
-instance corecursiveNu ∷ Functor f ⇒ Corecursive (Nu f) f where
+instance corecursiveNu :: Functor f => Corecursive (Nu f) f where
   embed = flip unfold (map observe)
 
-instance corecursiveFree ∷ Functor f ⇒ Corecursive (Free f a) (CoEnvT a f) where
+instance corecursiveFree :: Functor f => Corecursive (Free f a) (CoEnvT a f) where
   embed (CoEnvT e) = either pure (join <<< liftF) e
 
-instance corecursiveCofree ∷ Functor f ⇒ Corecursive (Cofree f a) (EnvT a f) where
+instance corecursiveCofree :: Functor f => Corecursive (Cofree f a) (EnvT a f) where
   embed et = mkCofree (ask et) (lower et)
     where
     ask (EnvT (Tuple e _)) = e

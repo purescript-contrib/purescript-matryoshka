@@ -28,8 +28,9 @@ prod Nil = 1
 prod (Cons h t) = h * t
 
 count :: Coalgebra (ListF Int) Int
-count n | n <= 0    = Nil
-        | otherwise = Cons n (n - 1)
+count n
+  | n <= 0 = Nil
+  | otherwise = Cons n (n - 1)
 
 fac :: Int -> Int
 fac = hylo prod count

@@ -29,17 +29,17 @@ import Data.Tuple (Tuple(..))
 
 import Matryoshka.Pattern.CoEnvT (CoEnvT(..))
 
-class Functor f ⇐ Recursive t f | t → f where
-  project ∷ t → f t
+class Functor f <= Recursive t f | t -> f where
+  project :: t -> f t
 
-instance recursiveMu ∷ Functor f ⇒ Recursive (Mu f) f where
+instance recursiveMu :: Functor f => Recursive (Mu f) f where
   project = unroll
 
-instance recursiveNu ∷ Functor f ⇒ Recursive (Nu f) f where
+instance recursiveNu :: Functor f => Recursive (Nu f) f where
   project = observe
 
-instance recursiveFree ∷ Functor f ⇒ Recursive (Free f a) (CoEnvT a f) where
+instance recursiveFree :: Functor f => Recursive (Free f a) (CoEnvT a f) where
   project = CoEnvT <<< either Right Left <<< resume
 
-instance recursiveCofree ∷ Functor f ⇒ Recursive (Cofree f a) (EnvT a f) where
+instance recursiveCofree :: Functor f => Recursive (Cofree f a) (EnvT a f) where
   project cf = EnvT $ Tuple (head cf) (tail cf)

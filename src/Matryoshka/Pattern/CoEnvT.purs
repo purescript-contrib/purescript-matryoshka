@@ -28,16 +28,16 @@ import Data.Bifunctor (lmap)
 newtype CoEnvT :: Type -> (Type -> Type) -> Type -> Type
 newtype CoEnvT e m a = CoEnvT (Either e (m a))
 
-runEnvT ∷ ∀ e m a. CoEnvT e m a → Either e (m a)
+runEnvT :: forall e m a. CoEnvT e m a -> Either e (m a)
 runEnvT (CoEnvT x) = x
 
-withEnvT ∷ ∀ e1 e2 m a. (e1 → e2) → CoEnvT e1 m a → CoEnvT e2 m a
+withEnvT :: forall e1 e2 m a. (e1 -> e2) -> CoEnvT e1 m a -> CoEnvT e2 m a
 withEnvT f (CoEnvT e) = CoEnvT (lmap f e)
 
-mapEnvT ∷ ∀ e m1 m2 a b. (m1 a → m2 b) → CoEnvT e m1 a → CoEnvT e m2 b
+mapEnvT :: forall e m1 m2 a b. (m1 a -> m2 b) -> CoEnvT e m1 a -> CoEnvT e m2 b
 mapEnvT f (CoEnvT e) = CoEnvT (map f e)
 
-derive instance newtypeEnvT ∷ Newtype (CoEnvT e m a) _
+derive instance newtypeEnvT :: Newtype (CoEnvT e m a) _
 
-instance functorEnvT ∷ Functor m ⇒ Functor (CoEnvT e m) where
+instance functorEnvT :: Functor m => Functor (CoEnvT e m) where
   map f (CoEnvT e) = CoEnvT (map (map f) e)
