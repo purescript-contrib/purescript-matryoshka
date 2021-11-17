@@ -37,110 +37,110 @@ import Matryoshka.Transform (Transform)
 import Matryoshka.Util (mapR)
 
 hylo
-  ∷ ∀ f a b
-  . Functor f
-  ⇒ Algebra f b
-  → Coalgebra f a
-  → a
-  → b
+  :: forall f a b
+   . Functor f
+  => Algebra f b
+  -> Coalgebra f a
+  -> a
+  -> b
 hylo f g = go
   where
   go a = f $ go <$> g a
 
 hyloM
-  ∷ ∀ f m a b
-  . Monad m
-  ⇒ Traversable f
-  ⇒ AlgebraM m f b
-  → CoalgebraM m f a
-  → a
-  → m b
+  :: forall f m a b
+   . Monad m
+  => Traversable f
+  => AlgebraM m f b
+  -> CoalgebraM m f a
+  -> a
+  -> m b
 hyloM f g = go
   where
   go a = f =<< traverse go =<< g a
 
 ghylo
-  ∷ ∀ f w n a b
-  . Monad n
-  ⇒ Comonad w
-  ⇒ Functor f
-  ⇒ DistributiveLaw f w
-  → DistributiveLaw n f
-  → GAlgebra w f b
-  → GCoalgebra n f a
-  → a
-  → b
+  :: forall f w n a b
+   . Monad n
+  => Comonad w
+  => Functor f
+  => DistributiveLaw f w
+  -> DistributiveLaw n f
+  -> GAlgebra w f b
+  -> GCoalgebra n f a
+  -> a
+  -> b
 ghylo w n f g = extract <<< go <<< pure
   where
   go na = f <$> w ((duplicate <<< go <<< join) <$> n (g <$> na))
 
 ghyloM
-  ∷ ∀ f w n m a b
-  . Monad m
-  ⇒ Monad n
-  ⇒ Comonad w
-  ⇒ Traversable f
-  ⇒ Traversable w
-  ⇒ Traversable n
-  ⇒ DistributiveLaw f w
-  → DistributiveLaw n f
-  → GAlgebraM w m f b
-  → GCoalgebraM n m f a
-  → a
-  → m b
+  :: forall f w n m a b
+   . Monad m
+  => Monad n
+  => Comonad w
+  => Traversable f
+  => Traversable w
+  => Traversable n
+  => DistributiveLaw f w
+  -> DistributiveLaw n f
+  -> GAlgebraM w m f b
+  -> GCoalgebraM n m f a
+  -> a
+  -> m b
 ghyloM w m f g = map extract <<< h <<< pure
   where
   h x = traverse f =<< w <$> (traverse (map duplicate <<< h <<< join) <<< m =<< traverse g x)
 
 transHylo
-  ∷ ∀ t f g h u
-  . Recursive t f
-  ⇒ Corecursive u h
-  ⇒ Functor g
-  ⇒ Transform u g h
-  → Transform t f g
-  → t
-  → u
+  :: forall t f g h u
+   . Recursive t f
+  => Corecursive u h
+  => Functor g
+  => Transform u g h
+  -> Transform t f g
+  -> t
+  -> u
 transHylo f g = go
   where
   go t = mapR (f <<< map go <<< g) t
 
 dyna
-  ∷ ∀ f a b
-  . Functor f
-  ⇒ GAlgebra (Cofree f) f b
-  → Coalgebra f a
-  → a
-  → b
+  :: forall f a b
+   . Functor f
+  => GAlgebra (Cofree f) f b
+  -> Coalgebra f a
+  -> a
+  -> b
 dyna f g = ghylo distHisto distAna f (map Identity <<< g)
 
 codyna
-  ∷ ∀ f a b
-  . Functor f
-  ⇒ Algebra f b
-  → GCoalgebra (Free f) f a
-  → a
-  → b
+  :: forall f a b
+   . Functor f
+  => Algebra f b
+  -> GCoalgebra (Free f) f a
+  -> a
+  -> b
 codyna f = ghylo distCata distFutu (lcmap (map unwrap) f)
 
 codynaM
-  ∷ ∀ f m a b
-  . Monad m
-  ⇒ Traversable f
-  ⇒ AlgebraM m f b
-  → GCoalgebraM (Free f) m f a
-  → a
-  → m b
+  :: forall f m a b
+   . Monad m
+  => Traversable f
+  => AlgebraM m f b
+  -> GCoalgebraM (Free f) m f a
+  -> a
+  -> m b
 codynaM f = ghyloM distCata distFutu (lcmap (map unwrap) f)
 
 chrono
-  ∷ ∀ f a b
-  . Functor f
-  ⇒ GAlgebra (Cofree f) f b
-  → GCoalgebra (Free f) f a
-  → a
-  → b
+  :: forall f a b
+   . Functor f
+  => GAlgebra (Cofree f) f b
+  -> GCoalgebra (Free f) f a
+  -> a
+  -> b
 chrono = ghylo distHisto distFutu
 
-convertTo ∷ ∀ t f r. Recursive t f ⇒ Corecursive r f ⇒ t → r
+convertTo :: forall t f r. Recursive t f => Corecursive r f => t -> r
 convertTo = cata embed
