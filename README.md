@@ -4,7 +4,6 @@
 [![Release](https://img.shields.io/github/release/purescript-contrib/purescript-matryoshka.svg)](https://github.com/purescript-contrib/purescript-matryoshka/releases)
 [![Pursuit](https://pursuit.purescript.org/packages/purescript-matryoshka/badge)](https://pursuit.purescript.org/packages/purescript-matryoshka)
 [![Maintainer: garyb](https://img.shields.io/badge/maintainer-garyb-teal.svg)](https://github.com/garyb)
-[![Maintainer: thomashoneyman](https://img.shields.io/badge/maintainer-thomashoneyman-teal.svg)](https://github.com/thomashoneyman)
 
 Generalized folds, unfolds, and traversals for fixed point data structures in PureScript. (A port of [Matryoshka](https://github.com/precog/matryoshka)).
 
