@@ -19,7 +19,7 @@ module Matryoshka.DistributiveLaw where
 import Prelude
 
 import Control.Comonad (class Comonad, extract)
-import Control.Comonad.Cofree (Cofree, unfoldCofree, tail)
+import Control.Comonad.Cofree (Cofree, buildCofree, tail)
 import Control.Comonad.Env.Trans (EnvT(..), runEnvT)
 import Control.Comonad.Trans.Class (lower)
 import Control.Monad.Except (ExceptT(..), runExceptT)
@@ -81,7 +81,7 @@ distGHisto
   => Functor h
   => DistributiveLaw f h
   -> DistributiveLaw f (Cofree h)
-distGHisto k = unfoldCofree (map extract) (k <<< map tail)
+distGHisto k = buildCofree \s -> Tuple (map extract s) (k $ map tail s)
 
 distAna :: forall f. Functor f => DistributiveLaw Identity f
 distAna = map wrap <<< unwrap
