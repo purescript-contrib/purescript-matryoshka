@@ -14,7 +14,6 @@
   , "newtype"
   , "prelude"
   , "profunctor"
-  , "psci-support"
   , "transformers"
   , "tuples"
   ]
