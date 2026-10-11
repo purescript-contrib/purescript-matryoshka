@@ -1,0 +1,34 @@
+package:
+  name: matryoshka
+  description: Generalized folds, unfolds, and traversals for fixed point data structures in PureScript.
+  publish:
+    version: 1.0.1
+    license: Apache-2.0
+    location:
+      githubOwner: purescript-contrib
+      githubRepo: purescript-matryoshka
+  build:
+    strict: true
+  dependencies:
+    - bifunctors: ">=6.0.0 <7.0.0"
+    - control: ">=6.0.0 <7.0.0"
+    - distributive: ">=6.0.0 <7.0.0"
+    - either: ">=6.0.0 <7.0.0"
+    - fixed-points: ">=7.0.0 <8.0.0"
+    - foldable-traversable: ">=6.0.0 <7.0.0"
+    - free: ">=7.0.0 <8.0.0"
+    - identity: ">=6.0.0 <7.0.0"
+    - lists: ">=7.0.0 <8.0.0"
+    - newtype: ">=5.0.0 <6.0.0"
+    - prelude: ">=6.0.0 <7.0.0"
+    - profunctor: ">=6.0.0 <7.0.0"
+    - transformers: ">=6.0.0 <7.0.0"
+    - tuples: ">=7.0.0 <8.0.0"
+  test:
+    main: Test.Main
+    dependencies:
+      - console
+      - effect
+workspace:
+  packageSet:
+    registry: 81.4.0

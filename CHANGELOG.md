@@ -11,6 +11,7 @@ New features:
 Bugfixes:
 
 Other improvements:
+- Migrated to registry-backed Spago and updated CI tooling.
 
 ## [v1.0.0](https://github.com/purescript-contrib/purescript-matryoshka/releases/tag/v1.0.0) - 2022-04-27
 
